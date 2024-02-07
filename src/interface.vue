@@ -28,6 +28,10 @@ export default {
 			type: Number,
 			default: null,
 		},
+		is1024bytes: {
+			type: Boolean,
+			default: false,
+		}
 	},
 	emits: ['input'],
 	setup(props, { emit }) {
@@ -36,7 +40,7 @@ export default {
 		const unitItems = sizeUnits.map(unit => ({ text: unit, value: unit }))
 
 		watch(() => props.value, () => {
-			const [iNum, iUnit] = formatBytes(props.value || 0);
+			const [iNum, iUnit] = formatBytes(props.value || 0, 2, props.is1024bytes ? 1024 : 1000);
 			valueShort.value = iNum;
 			unit.value = iUnit;
 		}, { immediate: true })
@@ -46,7 +50,7 @@ export default {
 		return { valueShort, unit, unitItems, handleChange };
 
 		function handleChange() {
-			const realValue = unformatBytes(valueShort.value, unit.value);
+			const realValue = unformatBytes(valueShort.value, unit.value, props.is1024bytes ? 1024 : 1000);
 			emit('input', realValue);
 		}
 	},
